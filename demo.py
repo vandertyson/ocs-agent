@@ -22,7 +22,7 @@ except json.JSONDecodeError:
     exit(1)
 
 # Load prompt from Markdown file
-prompt_file = Path("prompt.md")
+prompt_file = Path("prompt_grok.md")
 try:
     with prompt_file.open("r", encoding="utf-8") as f:
         system_prompt = f.read()
@@ -41,22 +41,6 @@ def call_sql_api(query):
     url = ""
     if "SELECT" in upper:
         url = "https://34ee5145-restless-tree-1740.ptson117.workers.dev/api/sql/query"
-        # return [
-        #     {
-        #         "name": "ST120K",
-        #         "price": 120000,
-        #         "account_type_name": "data",
-        #         "amount": 1,
-        #         "unit": "GB"
-        #     },
-        #     {
-        #         "name": "ST120K",
-        #         "price": 120000,
-        #         "account_type_name": "call",
-        #         "amount": 50,
-        #         "unit": "phút"
-        #     }
-        # ]
     elif "INSERT" in upper or "UPDATE" in upper or "DELETE" in upper:
         url = "https://34ee5145-restless-tree-1740.ptson117.workers.dev/api/sql/mutate"
 
@@ -83,10 +67,8 @@ messages = [
         "content": system_prompt
     },
     {
-        "role":
-        "user",
-        "content":
-        "Tạo cho tôi gói cước SM25K với giá 25.000 VND, gói này có 1GB data và 50 sms."
+        "role": "user",
+        "content": "Xóa gói SM25K"
         # "Gói nào đắt nhất trong danh sách các gói cước của công ty?"
     }
 ]
@@ -101,6 +83,7 @@ while iteration < max_iterations:
         response = client.chat.completions.create(model="deepseek-chat",
                                                   messages=messages,
                                                   tools=tools)
+        print("response from deepseek: ", response)
     except Exception as e:
         print(f"Lỗi: Không thể gọi API DeepSeek: {str(e)}")
         exit(1)
